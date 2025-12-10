@@ -1,7 +1,7 @@
 // Sahibinden Instagram Generator - Popup Script
 
 const CONFIG = {
-  SERVER_URL: 'http://localhost:3000',
+  SERVER_URL: 'https://sahibinden-instagram-generator-production.up.railway.app',
   MAX_IMAGES: 6
 };
 
