@@ -26,14 +26,14 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files from server directory
+COPY server/package*.json ./
 
-# Install dependencies (use install instead of ci for better compatibility)
+# Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Copy source code
-COPY . .
+# Copy server source code
+COPY server/ .
 
 # Bundle Remotion (required before build)
 RUN node scripts/bundle-remotion.mjs
