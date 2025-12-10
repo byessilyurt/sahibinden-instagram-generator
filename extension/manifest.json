@@ -9,7 +9,7 @@
   ],
   "host_permissions": [
     "https://www.sahibinden.com/*",
-    "http://localhost:3000/*"
+    "https://sahibinden-instagram-generator-production.up.railway.app/*"
   ],
   "action": {
     "default_popup": "popup.html",
