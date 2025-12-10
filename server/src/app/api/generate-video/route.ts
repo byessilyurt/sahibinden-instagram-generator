@@ -225,13 +225,16 @@ export async function POST(req: NextRequest) {
     // Create video output path
     videoOutputPath = path.join(tempDir, `video-${crypto.randomBytes(8).toString('hex')}.mp4`);
 
-    // Render video
+    // Render video with memory-optimized settings
     await renderMedia({
       composition,
       serveUrl: bundleLocation,
       codec: 'h264',
       outputLocation: videoOutputPath,
       inputProps,
+      concurrency: 1, // Reduce parallel rendering to save memory
+      crf: 23, // Slightly lower quality for smaller memory footprint
+      jpegQuality: 80, // JPEG quality for frames
     });
 
     console.log('✅ Video rendered successfully!');
