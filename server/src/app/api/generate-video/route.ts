@@ -36,9 +36,7 @@ async function getImageOrientation(buffer: Buffer): Promise<boolean> {
 // Save base64 and detect orientation
 async function processImages(
   images: string[],
-  tempDir: string,
-  publicSubPath: string,
-  baseUrl: string
+  tempDir: string
 ): Promise<{
   urls: string[];
   orientations: boolean[];
@@ -85,8 +83,8 @@ async function processImages(
       const filePath = path.join(tempDir, fileName);
       fs.writeFileSync(filePath, buffer);
 
-      // Generate URL
-      const url = `${baseUrl}/${publicSubPath}/${fileName}`;
+      // Use file:// URL for Remotion (server-side rendering)
+      const url = `file://${filePath}`;
       urls.push(url);
 
       console.log(`  ✓ Image ${i + 1}: ${(buffer.length / 1024).toFixed(2)} KB, ${isLandscape ? 'landscape' : 'portrait'}`);
@@ -157,9 +155,7 @@ export async function POST(req: NextRequest) {
     console.log(`🖼️  Processing ${images.length} images...`);
     const { urls, orientations, errors } = await processImages(
       images.slice(0, 6), // Max 6 images
-      tempDir,
-      publicSubPath,
-      baseUrl
+      tempDir
     );
 
     const validUrls = urls.filter(Boolean);
@@ -181,7 +177,7 @@ export async function POST(req: NextRequest) {
         const logoFileName = `agent-logo-${crypto.randomBytes(4).toString('hex')}.png`;
         const logoPath = path.join(tempDir, logoFileName);
         fs.writeFileSync(logoPath, logoBuffer);
-        agentLogoUrl = `${baseUrl}/${publicSubPath}/${logoFileName}`;
+        agentLogoUrl = `file://${logoPath}`;
         console.log('✅ Agent logo processed');
       } catch (err) {
         console.warn('⚠️  Could not process agent logo:', err);
