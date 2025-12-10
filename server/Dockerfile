@@ -1,6 +1,6 @@
 FROM node:20-slim
 
-# Install Chromium dependencies for Remotion
+# Install Chromium and build dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y \
     libxfixes3 \
     libxrandr2 \
     xdg-utils \
+    python3 \
+    build-essential \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
@@ -27,8 +29,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (use install instead of ci for better compatibility)
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
