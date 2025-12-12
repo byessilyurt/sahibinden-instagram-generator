@@ -106,17 +106,37 @@ function scrapePageData() {
   };
 
   const scrapeAgentDetails = () => {
-    const infoBlock = document.querySelector('.owner-info-container, .classified-owner-info, .seller-info-container');
+    const infoBlock = document.querySelector('.user-info-module');
     if (!infoBlock) return { agentName: "", agentPhone: "", agentLogoUrl: null };
 
-    const nameEl = infoBlock.querySelector('.owner-name') || infoBlock.querySelector('.username');
-    const phoneEl = infoBlock.querySelector('.pretty-phone-number') || infoBlock.querySelector('.phone-number');
-    const logoImg = infoBlock.querySelector('.logo img') || infoBlock.querySelector('.corporate-logo img');
+    // Agent name from h3 in .user-info-agent
+    const agentNameEl = infoBlock.querySelector('.user-info-agent h3');
+
+    // Agent photo (profile picture)
+    const agentPhotoEl = infoBlock.querySelector('img.user-info-agent-logo');
+
+    // Store logo (company logo - prefer this for branding)
+    const storeLogoEl = infoBlock.querySelector('.user-info-store-logo img');
+
+    // Phone - prefer mobile (Cep), fallback to work (İş)
+    let phone = "";
+    const phoneGroups = infoBlock.querySelectorAll('.user-info-phones .dl-group');
+    for (const group of phoneGroups) {
+      const label = group.querySelector('dt')?.innerText?.trim();
+      const number = group.querySelector('dd')?.innerText?.trim();
+      if (label === 'Cep' && number) {
+        phone = number;
+        break;
+      }
+      if (!phone && number) {
+        phone = number; // fallback to first available
+      }
+    }
 
     return {
-      agentName: nameEl ? nameEl.innerText.trim() : "",
-      agentPhone: phoneEl ? phoneEl.innerText.trim() : "",
-      agentLogoUrl: logoImg ? logoImg.src : null
+      agentName: agentNameEl ? agentNameEl.innerText.trim() : "",
+      agentPhone: phone,
+      agentLogoUrl: storeLogoEl?.src || agentPhotoEl?.src || null
     };
   };
 
