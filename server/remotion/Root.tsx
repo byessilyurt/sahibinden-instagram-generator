@@ -25,7 +25,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="InstagramStory"
         component={StoryTemplate}
-        durationInFrames={540} // 18 seconds at 30fps
+        durationInFrames={600} // 20 seconds at 30fps (18s images + 2s ending)
         fps={30}
         width={1080}
         height={1920}
@@ -39,7 +39,7 @@ export const RemotionRoot: React.FC = () => {
           image4: '',
           image5: '',
           image6: '',
-          agentName: 'Emlak Ofisi',
+          agentName: '',
           agentPhone: '',
           agentLogo: '',
           imageOrientations: [],

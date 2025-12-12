@@ -24,6 +24,8 @@ export type StoryProps = {
 const FPS = 30;
 const FRAMES_PER_IMAGE = 90; // 3 seconds per image
 const TRANSITION_FRAMES = 15; // 0.5 seconds transition
+const ENDING_FRAMES = 60; // 2 seconds for ending screen
+const ENDING_FADE_FRAMES = 15; // 0.5 seconds fade-in
 
 export const StoryTemplate: React.FC<StoryProps> = ({
   baslik,
@@ -70,6 +72,14 @@ export const StoryTemplate: React.FC<StoryProps> = ({
   // Check if current image is landscape
   const isCurrentLandscape = imageOrientations[currentImageIndex] ?? false;
   const isNextLandscape = imageOrientations[nextImageIndex] ?? false;
+
+  // Calculate ending screen state
+  const totalImageFrames = images.length * FRAMES_PER_IMAGE;
+  const isInEndingScreen = frame >= totalImageFrames;
+  const endingScreenFrame = frame - totalImageFrames;
+  const endingFadeOpacity = isInEndingScreen
+    ? interpolate(endingScreenFrame, [0, ENDING_FADE_FRAMES], [0, 1], { extrapolateRight: 'clamp' })
+    : 0;
 
   // Image layer component with blur-fill for landscape images
   const ImageLayer: React.FC<{
@@ -163,16 +173,18 @@ export const StoryTemplate: React.FC<StoryProps> = ({
         />
       )}
 
-      {/* Gradient overlay for text readability */}
-      <AbsoluteFill
-        style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 25%, transparent 50%)',
-          zIndex: 10,
-        }}
-      />
+      {/* Gradient overlay for text readability - hide during ending */}
+      {!isInEndingScreen && (
+        <AbsoluteFill
+          style={{
+            background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 25%, transparent 50%)',
+            zIndex: 10,
+          }}
+        />
+      )}
 
-      {/* Top branding bar */}
-      <div
+      {/* Top branding bar - hide during ending */}
+      {!isInEndingScreen && <div
         style={{
           position: 'absolute',
           top: 0,
@@ -223,10 +235,10 @@ export const StoryTemplate: React.FC<StoryProps> = ({
         >
           {agentName || 'Emlak Ofisi'}
         </div>
-      </div>
+      </div>}
 
-      {/* Bottom info overlay */}
-      <AbsoluteFill
+      {/* Bottom info overlay - hide during ending */}
+      {!isInEndingScreen && <AbsoluteFill
         style={{
           justifyContent: 'flex-end',
           padding: 50,
@@ -303,34 +315,115 @@ export const StoryTemplate: React.FC<StoryProps> = ({
             <span>📞</span> {agentPhone}
           </div>
         )}
-      </AbsoluteFill>
+      </AbsoluteFill>}
 
-      {/* Progress indicator (dots) */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 130,
-          left: 0,
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 8,
-          zIndex: 25,
-        }}
-      >
-        {images.map((_, index) => (
+      {/* Progress indicator (dots) - hide during ending screen */}
+      {!isInEndingScreen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 130,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 8,
+            zIndex: 25,
+          }}
+        >
+          {images.map((_, index) => (
+            <div
+              key={index}
+              style={{
+                width: index === currentImageIndex ? 24 : 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: index === currentImageIndex ? '#eab308' : 'rgba(255,255,255,0.5)',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Ending Screen - Agent Branding */}
+      {isInEndingScreen && (
+        <AbsoluteFill
+          style={{
+            opacity: endingFadeOpacity,
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+          }}
+        >
+          {/* Agent Logo */}
+          {agentLogo && (
+            <div
+              style={{
+                width: 180,
+                height: 180,
+                borderRadius: 90,
+                backgroundColor: 'white',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                border: '4px solid rgba(255,255,255,0.9)',
+                marginBottom: 40,
+              }}
+            >
+              <Img
+                src={agentLogo}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+          )}
+
+          {/* Agent Name */}
           <div
-            key={index}
             style={{
-              width: index === currentImageIndex ? 24 : 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: index === currentImageIndex ? '#eab308' : 'rgba(255,255,255,0.5)',
-              transition: 'all 0.3s ease',
+              color: 'white',
+              fontSize: 56,
+              fontWeight: 700,
+              fontFamily: 'sans-serif',
+              textAlign: 'center',
+              marginBottom: 24,
+              textShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              padding: '0 40px',
             }}
-          />
-        ))}
-      </div>
+          >
+            {agentName || 'Emlak Ofisi'}
+          </div>
+
+          {/* Agent Phone */}
+          {agentPhone && (
+            <div
+              style={{
+                color: 'white',
+                fontSize: 42,
+                fontFamily: 'sans-serif',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 16,
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                padding: '16px 36px',
+                borderRadius: 16,
+              }}
+            >
+              <span>📞</span> {agentPhone}
+            </div>
+          )}
+        </AbsoluteFill>
+      )}
     </AbsoluteFill>
   );
 };

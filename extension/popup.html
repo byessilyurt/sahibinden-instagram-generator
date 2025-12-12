@@ -155,15 +155,6 @@
       box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
     }
 
-    .btn-scan {
-      background: #edf2f7;
-      color: #4a5568;
-    }
-
-    .btn-scan:hover:not(:disabled) {
-      background: #e2e8f0;
-    }
-
     .footer {
       text-align: center;
       margin-top: 16px;
@@ -196,9 +187,9 @@
       <p>Instagram Post & Story</p>
     </div>
 
-    <div id="statusBox" class="status-box">
-      <div class="status-title" id="statusTitle">Durum</div>
-      <div class="status-text" id="statusText">Sahibinden ilan sayfasinda oldugunuzdan emin olun.</div>
+    <div id="statusBox" class="status-box loading">
+      <div class="status-title" id="statusTitle">Yukleniyor</div>
+      <div class="status-text" id="statusText">Sayfa verileri aliniyor...</div>
       <div id="listingInfo" class="listing-info hidden">
         <div class="title" id="listingTitle"></div>
         <div class="price" id="listingPrice"></div>
@@ -208,10 +199,6 @@
     </div>
 
     <div class="buttons">
-      <button id="scanBtn" class="btn-scan">
-        <span id="scanText">Sayfayi Tara</span>
-      </button>
-
       <button id="imageBtn" class="btn-image" disabled>
         <span id="imageText">Instagram Post Olustur</span>
       </button>
@@ -222,7 +209,7 @@
     </div>
 
     <div class="footer">
-      Sunucu: Railway Production
+      Arka planda calisir - pencereyi kapatabilirsiniz
     </div>
   </div>
 

@@ -1,16 +1,23 @@
 {
   "manifest_version": 3,
   "name": "Sahibinden Instagram Generator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Generate Instagram posts and stories from sahibinden.com listings",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage",
+    "downloads",
+    "notifications",
+    "tabs"
   ],
   "host_permissions": [
     "https://www.sahibinden.com/*",
     "https://sahibinden-instagram-generator-production.up.railway.app/*"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
